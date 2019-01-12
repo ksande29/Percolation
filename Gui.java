@@ -21,12 +21,12 @@ public class Gui extends JFrame
 
 	private JPanel contentPane;
 	
-	private int width = 20;
-	private int height = 20;
+	private int width = 50;
+	private int height = 50;
 	private int totalN = width * height;
 	private ArrayList<JButton> buttons;
 
-	private Percolation percolation = new Percolation(width, height);
+	private Percolation percolation;
 
 
 	/**
@@ -56,6 +56,8 @@ public class Gui extends JFrame
 	 */
 	public Gui() 
 	{
+		makePercolation();
+		
 		setUpMainDisplay();	
 		JPanel panelCenter = makeCenterPanel();	
 		makeLeftPanel();	
@@ -63,8 +65,14 @@ public class Gui extends JFrame
 		makeTopPanel();
 		JPanel panelBottom = makeBottomPanel();				
 		makeRunButton(panelCenter, panelBottom);	
+		makeResetButton(panelCenter, panelBottom);
 	}
 
+	private void makePercolation()
+	{
+		percolation = new Percolation(width, height);
+	}
+	
 	private void setUpMainDisplay() 
 	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -121,7 +129,7 @@ public class Gui extends JFrame
 	
 	private void makeRunButton(JPanel panel, JPanel panelBottom) 
 	{
-		JButton runBtn = new JButton("Run");
+		JButton runBtn = new JButton("Test Percolation");
 		runBtn.setBorder(new EmptyBorder(10, 10, 10, 10));
 		runBtn.setFont(new Font("Verdana", Font.BOLD, 20));
 		runBtn.setBackground(Color.WHITE);
@@ -134,6 +142,27 @@ public class Gui extends JFrame
 				panel.revalidate();
 				panel.repaint();
 				drawWater(panel);
+			}
+		});
+	}
+	
+	private void makeResetButton(JPanel panel, JPanel panelBottom) 
+	{
+		JButton runBtn = new JButton("New Board");
+		runBtn.setBorder(new EmptyBorder(10, 10, 10, 10));
+		runBtn.setFont(new Font("Verdana", Font.BOLD, 20));
+		runBtn.setBackground(Color.WHITE);
+		panelBottom.add(runBtn);
+		runBtn.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				panel.removeAll();
+				panel.revalidate();
+				panel.repaint();
+				
+				makePercolation();
+				drawButtons(panel);
 			}
 		});
 	}
