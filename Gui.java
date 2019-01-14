@@ -13,7 +13,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
 import java.awt.Font;
 
 public class Gui extends JFrame 
@@ -21,8 +20,8 @@ public class Gui extends JFrame
 
 	private JPanel contentPane;
 	
-	private int width = 50;
-	private int height = 50;
+	private int width = 20;
+	private int height = 20;
 	private int totalN = width * height;
 	private ArrayList<JButton> buttons;
 
@@ -62,10 +61,11 @@ public class Gui extends JFrame
 		JPanel panelCenter = makeCenterPanel();	
 		makeLeftPanel();	
 		makeRightpanel();	
-		makeTopPanel();
+		JPanel panelTop = makeTopPanel();
+		JLabel topMessage = makeTopMessage(panelTop);	
 		JPanel panelBottom = makeBottomPanel();				
-		makeRunButton(panelCenter, panelBottom);	
-		makeResetButton(panelCenter, panelBottom);
+		makeRunButton(panelCenter, panelBottom, topMessage);	
+		makeResetButton(panelCenter, panelBottom, topMessage);
 	}
 
 	private void makePercolation()
@@ -89,8 +89,7 @@ public class Gui extends JFrame
 		panel.setBackground(Color.BLACK);
 		contentPane.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(height, 0, 0, 0));		
-		drawButtons(panel);
-		
+		drawButtons(panel);	
 		return panel;
 	}
 	
@@ -110,12 +109,23 @@ public class Gui extends JFrame
 		contentPane.add(panelRight, BorderLayout.EAST);
 	}
 
-	private void makeTopPanel() 
+	private JPanel makeTopPanel() 
 	{
 		JPanel panelTop = new JPanel();
 		panelTop.setBorder(new EmptyBorder(10, 10, 10, 10));
 		panelTop.setBackground(Color.BLACK);
-		contentPane.add(panelTop, BorderLayout.NORTH);
+		contentPane.add(panelTop, BorderLayout.NORTH);	
+		return panelTop;
+	}
+	
+	private JLabel makeTopMessage(JPanel panelTop)
+	{
+		JLabel topMessage = new JLabel("Will it Percolate?");
+		topMessage.setBorder(new EmptyBorder(10, 10, 10, 10));
+		topMessage.setFont(new Font("Verdana", Font.BOLD, 30));
+		topMessage.setForeground(Color.WHITE);
+		panelTop.add(topMessage);
+		return topMessage;
 	}
 	
 	private JPanel makeBottomPanel() 
@@ -127,9 +137,10 @@ public class Gui extends JFrame
 		return panelBottom;
 	}
 	
-	private void makeRunButton(JPanel panel, JPanel panelBottom) 
+	private void makeRunButton(JPanel panel, JPanel panelBottom, JLabel topMessage) 
 	{
 		JButton runBtn = new JButton("Test Percolation");
+		runBtn.setFocusable(false);
 		runBtn.setBorder(new EmptyBorder(10, 10, 10, 10));
 		runBtn.setFont(new Font("Verdana", Font.BOLD, 20));
 		runBtn.setBackground(Color.WHITE);
@@ -138,17 +149,25 @@ public class Gui extends JFrame
 		{
 			public void actionPerformed(ActionEvent arg0) 
 			{
+				//redraw board
 				panel.removeAll();
 				panel.revalidate();
 				panel.repaint();
 				drawWater(panel);
+				
+				//test percolation
+				if (percolation.percolates())
+					topMessage.setText("It Percolates");
+				else
+					topMessage.setText("It does not Percolate");
 			}
 		});
 	}
 	
-	private void makeResetButton(JPanel panel, JPanel panelBottom) 
+	private void makeResetButton(JPanel panel, JPanel panelBottom, JLabel messageTop) 
 	{
 		JButton runBtn = new JButton("New Board");
+		runBtn.setFocusable(false);
 		runBtn.setBorder(new EmptyBorder(10, 10, 10, 10));
 		runBtn.setFont(new Font("Verdana", Font.BOLD, 20));
 		runBtn.setBackground(Color.WHITE);
@@ -163,6 +182,8 @@ public class Gui extends JFrame
 				
 				makePercolation();
 				drawButtons(panel);
+				
+				messageTop.setText("Will it Percolate?");
 			}
 		});
 	}

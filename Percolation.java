@@ -6,8 +6,8 @@ public class Percolation
 {
 	private int width;
 	private int height;
-	private int top = width * height + 1;
-	private int bottom = width * height + 2;
+	private int top;
+	private int bottom;
 	
 	private int[] id;
 	private int[] size;
@@ -20,16 +20,22 @@ public class Percolation
 		//initialize variables
 		this.height = height;
 		this.width = width;
+		this.top = width * height;
+		this.bottom = width * height + 1;
 		
 		//set values in arrays
 		id = new int[(height * width) + 2];	
-		size = new int[height * width];
+		size = new int[(height * width) + 2];
 		isOpen = new boolean[height * width];	
-		for(int i = 0; i < id.length-2; i++)
+		
+		for(int i = 0; i < id.length; i++)
 		{
 			id[i] = i;
 			size[i] = 1;
-			isOpen[i] = rand.nextBoolean();		
+			if ( i < id.length - 2)
+			{
+				isOpen[i] = rand.nextBoolean();	
+			}
 		}
 		
 		for (int i = 0; i < id.length-2; i++)
@@ -38,7 +44,7 @@ public class Percolation
 			{
 				//connect open squares on first row to the top
 				if (i < width)
-					union(i, top);
+					union(i, top); 
 				else
 				{
 					//connect open squares to open squares above
@@ -53,6 +59,8 @@ public class Percolation
 				}
 			}
 		}
+		
+		joinBottom();
 		
 
 	}
@@ -97,6 +105,22 @@ public class Percolation
 		return p;
 	}
 	
+	public void joinBottom() //BROKEN!!!!!!!!!!!! squares not attached to the top are being connected at the bottom
+	{
+		//only connect squares that are open and already connected to the top
+		for (int i = isOpen.length - width; i < isOpen.length; i++)
+		{
+			if ( isOpen[i] == true && isConnected(i, top) )
+				union(i, bottom);
+		}
+		System.out.println();
+	}
+	
+	public boolean percolates()
+	{
+		return isConnected(top, bottom);
+	}
+	
 
 
 
@@ -114,6 +138,10 @@ public class Percolation
 
 	public int getTop() {
 		return top;
+	}
+	
+	public int getBottom() {
+		return bottom;
 	}
 	
 	
